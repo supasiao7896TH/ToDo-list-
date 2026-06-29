@@ -4,6 +4,7 @@ import TodoForm from './components/TodoForm'
 import FilterBar from './components/FilterBar'
 import TodoList from './components/TodoList'
 import PomodoroPanel from './components/PomodoroPanel'
+import StatsModal from './components/StatsModal'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { useReminders, requestNotificationPermission } from './hooks/useReminders'
 import { usePomodoro } from './hooks/usePomodoro'
@@ -27,6 +28,7 @@ export default function App() {
   const [todos, setTodos] = useLocalStorage('todos', [])
   const [theme, setTheme] = useLocalStorage('todo-theme', getInitialTheme())
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
+  const [showStats, setShowStats] = useState(false)
 
   // ใช้ธีมกับ root element
   useEffect(() => {
@@ -60,13 +62,19 @@ export default function App() {
 
   const addTodo = (data) => {
     setTodos((prev) => [
-      { id: createId(), done: false, createdAt: new Date().toISOString(), pomodoroCount: 0, ...data },
+      { id: createId(), done: false, createdAt: new Date().toISOString(), pomodoroCount: 0, completedAt: null, ...data },
       ...prev,
     ])
   }
 
   const toggleTodo = (id) =>
-    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)))
+    setTodos((prev) =>
+      prev.map((t) =>
+        t.id === id
+          ? { ...t, done: !t.done, completedAt: !t.done ? new Date().toISOString() : null }
+          : t
+      )
+    )
 
   const deleteTodo = (id) => {
     if (pomodoro.activeTaskId === id) pomodoro.stop()
@@ -91,6 +99,7 @@ export default function App() {
       <Header
         theme={theme}
         onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        onShowStats={() => setShowStats(true)}
         remaining={remaining}
       />
       <TodoForm onAdd={addTodo} />
@@ -123,6 +132,7 @@ export default function App() {
         onResume={pomodoro.resume}
         onStop={pomodoro.stop}
       />
+      {showStats && <StatsModal todos={todos} onClose={() => setShowStats(false)} />}
     </div>
   )
 }

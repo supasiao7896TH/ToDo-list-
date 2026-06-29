@@ -383,6 +383,148 @@ select:focus {
   }
 }
 
+/* View Toggle */
+.view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Calendar */
+.calendar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.calendar__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.calendar__title {
+  font-weight: 700;
+  font-size: 1rem;
+}
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.calendar__day-header {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 0.3rem 0;
+  font-weight: 600;
+}
+.calendar__cell {
+  min-height: 72px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--surface-2);
+  position: relative;
+}
+.calendar__cell--empty {
+  background: transparent;
+  border-color: transparent;
+}
+.calendar__cell--today {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface));
+}
+.calendar__day-num {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  line-height: 1;
+}
+.calendar__cell--today .calendar__day-num {
+  color: var(--primary);
+}
+.calendar__done-dot {
+  position: absolute;
+  top: 0.2rem;
+  right: 0.3rem;
+  font-size: 0.65rem;
+  color: var(--low);
+}
+.calendar__tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+}
+.calendar__task-chip {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  font-size: 0.68rem;
+  padding: 0.15rem 0.3rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.1s;
+}
+.calendar__task-chip:hover {
+  opacity: 0.8;
+}
+.calendar__task-chip--high {
+  background: rgba(239, 68, 68, 0.18);
+  color: var(--high);
+}
+.calendar__task-chip--medium {
+  background: rgba(245, 158, 11, 0.18);
+  color: var(--medium);
+}
+.calendar__task-chip--low {
+  background: rgba(16, 185, 129, 0.18);
+  color: var(--low);
+}
+.calendar__task-chip.is-done {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+.calendar__task-chip.is-overdue-chip {
+  outline: 1px solid var(--danger);
+}
+.calendar__extra {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  padding: 0.1rem 0.3rem;
+}
+
+@media (max-width: 540px) {
+  .calendar__cell {
+    min-height: 52px;
+  }
+  .calendar__task-chip {
+    font-size: 0.6rem;
+  }
+}
+
+/* Brand footer */
+.brand-footer {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  letter-spacing: 0.02em;
+}
+
 /* Stats Modal */
 .stats-modal-overlay {
   position: fixed;

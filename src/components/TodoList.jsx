@@ -1,6 +1,6 @@
 import TodoItem from './TodoItem'
 
-export default function TodoList({ todos, onToggle, onDelete, onUpdate }) {
+export default function TodoList({ todos, onToggle, onDelete, onUpdate, onStartPomodoro, activePomodoroId }) {
   if (todos.length === 0) {
     return <p className="empty-state">ไม่มีงานที่ตรงกับเงื่อนไข — เพิ่มงานใหม่ได้เลย!</p>
   }
@@ -14,6 +14,8 @@ export default function TodoList({ todos, onToggle, onDelete, onUpdate }) {
           onToggle={onToggle}
           onDelete={onDelete}
           onUpdate={onUpdate}
+          onStartPomodoro={onStartPomodoro}
+          isActivePomodoro={todo.id === activePomodoroId}
         />
       ))}
     </ul>

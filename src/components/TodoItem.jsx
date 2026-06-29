@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { PRIORITIES, CATEGORIES, formatDate, isOverdue } from '../utils/todoHelpers'
 
-export default function TodoItem({ todo, onToggle, onDelete, onUpdate }) {
+export default function TodoItem({ todo, onToggle, onDelete, onUpdate, onStartPomodoro, isActivePomodoro }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(todo)
 
@@ -47,7 +47,7 @@ export default function TodoItem({ todo, onToggle, onDelete, onUpdate }) {
   }
 
   return (
-    <li className={`todo-item ${todo.done ? 'is-done' : ''} ${overdue ? 'is-overdue' : ''}`}>
+    <li className={`todo-item ${todo.done ? 'is-done' : ''} ${overdue ? 'is-overdue' : ''} ${isActivePomodoro ? 'is-pomodoro-active' : ''}`}>
       <input
         type="checkbox"
         className="todo-item__check"
@@ -65,9 +65,21 @@ export default function TodoItem({ todo, onToggle, onDelete, onUpdate }) {
               📅 {formatDate(todo.dueDate)}{overdue ? ' (เลยกำหนด)' : ''}
             </span>
           )}
+          {todo.pomodoroCount > 0 && (
+            <span className="badge badge--pomodoro" title={`${todo.pomodoroCount} Pomodoro session`}>
+              🍅 {todo.pomodoroCount}
+            </span>
+          )}
         </div>
       </div>
       <div className="todo-item__actions">
+        <button
+          className={`btn btn--icon ${isActivePomodoro ? 'btn--pomodoro-active' : ''}`}
+          onClick={() => onStartPomodoro(todo.id, todo.title)}
+          title={isActivePomodoro ? 'กำลังโฟกัสอยู่' : 'เริ่ม Pomodoro'}
+        >
+          🍅
+        </button>
         <button className="btn btn--icon" onClick={() => { setDraft(todo); setEditing(true) }} title="แก้ไข">✏️</button>
         <button className="btn btn--icon" onClick={() => onDelete(todo.id)} title="ลบ">🗑️</button>
       </div>

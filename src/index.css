@@ -272,6 +272,107 @@ select:focus {
   padding: 2.5rem 1rem;
 }
 
+/* Pomodoro active task highlight */
+.is-pomodoro-active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+.btn--pomodoro-active {
+  filter: drop-shadow(0 0 4px var(--primary));
+}
+
+/* badge สำหรับ Pomodoro count */
+.badge--pomodoro {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border-color: transparent;
+}
+
+/* Floating Pomodoro Panel */
+.pomodoro-panel {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 220px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  z-index: 1000;
+  transition: transform 0.2s;
+}
+.pomodoro-panel.is-ticking {
+  animation: panel-pulse 4s ease-in-out infinite;
+}
+@keyframes panel-pulse {
+  0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+  50% { box-shadow: 0 8px 40px color-mix(in srgb, var(--primary) 30%, transparent); }
+}
+.pomodoro-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.5rem;
+}
+.pomodoro-panel__phase {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--primary);
+}
+.pomodoro-panel__sessions {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.pomodoro-panel__task {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+/* SVG ring + time overlay */
+.pomodoro-ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pomodoro-ring__time {
+  position: absolute;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.pomodoro-panel__actions {
+  display: flex;
+  gap: 0.4rem;
+  width: 100%;
+}
+.pomodoro-panel__actions .btn {
+  flex: 1;
+  font-size: 0.8rem;
+  padding: 0.45rem 0.5rem;
+  text-align: center;
+}
+
+@media (max-width: 540px) {
+  .pomodoro-panel {
+    bottom: 0.75rem;
+    right: 0.75rem;
+    width: 180px;
+  }
+}
+
 @media (max-width: 540px) {
   .todo-form__row {
     flex-direction: column;

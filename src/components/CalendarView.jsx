@@ -3,7 +3,7 @@ import { isOverdue } from '../utils/todoHelpers'
 
 const THAI_MONTHS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']
 const DAY_NAMES = ['อา','จ','อ','พ','พฤ','ศ','ส']
-const MAX_VISIBLE = 3
+const MAX_VISIBLE = 2
 
 function toDateStr(d) {
   return d.toISOString().slice(0, 10)
@@ -69,10 +69,12 @@ export default function CalendarView({ todos, onToggle }) {
           const extra = cell.tasks.length - MAX_VISIBLE
           return (
             <div key={cell.dateStr} className={`calendar__cell ${isToday ? 'calendar__cell--today' : ''}`}>
-              <span className="calendar__day-num">{cell.day}</span>
-              {doneTasks.length > 0 && doneTasks.length === cell.tasks.length && (
-                <span className="calendar__done-dot" title="ทำครบทุกงานวันนี้">✓</span>
-              )}
+              <div className="calendar__day-number-wrap">
+                <span className="calendar__day-num">{cell.day}</span>
+                {doneTasks.length > 0 && doneTasks.length === cell.tasks.length && (
+                  <span className="calendar__done-dot" title="ทำครบทุกงานวันนี้">✓</span>
+                )}
+              </div>
               <div className="calendar__tasks">
                 {visible.map((t) => (
                   <button

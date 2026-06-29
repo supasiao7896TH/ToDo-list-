@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Header from './components/Header'
 import TodoForm from './components/TodoForm'
 import FilterBar from './components/FilterBar'
 import TodoList from './components/TodoList'
+import PomodoroPanel from './components/PomodoroPanel'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { useReminders, requestNotificationPermission } from './hooks/useReminders'
+import { usePomodoro } from './hooks/usePomodoro'
 import { createId, filterTodos, sortTodos } from './utils/todoHelpers'
 
 const DEFAULT_FILTERS = {
@@ -39,9 +41,26 @@ export default function App() {
   // เปิดระบบแจ้งเตือนตาม due date
   useReminders(todos)
 
+  // เมื่อ work session จบ → บันทึก pomodoroCount
+  const onSessionComplete = useCallback(
+    (taskId) => {
+      setTodos((prev) =>
+        prev.map((t) =>
+          t.id === taskId ? { ...t, pomodoroCount: (t.pomodoroCount ?? 0) + 1 } : t,
+        ),
+      )
+    },
+    [setTodos],
+  )
+
+  const pomodoro = usePomodoro(onSessionComplete)
+
+  // หา title ของ task ที่กำลัง active
+  const activeTask = todos.find((t) => t.id === pomodoro.activeTaskId)
+
   const addTodo = (data) => {
     setTodos((prev) => [
-      { id: createId(), done: false, createdAt: new Date().toISOString(), ...data },
+      { id: createId(), done: false, createdAt: new Date().toISOString(), pomodoroCount: 0, ...data },
       ...prev,
     ])
   }
@@ -49,7 +68,10 @@ export default function App() {
   const toggleTodo = (id) =>
     setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)))
 
-  const deleteTodo = (id) => setTodos((prev) => prev.filter((t) => t.id !== id))
+  const deleteTodo = (id) => {
+    if (pomodoro.activeTaskId === id) pomodoro.stop()
+    setTodos((prev) => prev.filter((t) => t.id !== id))
+  }
 
   const updateTodo = (id, data) =>
     setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, ...data } : t)))
@@ -78,6 +100,8 @@ export default function App() {
         onToggle={toggleTodo}
         onDelete={deleteTodo}
         onUpdate={updateTodo}
+        onStartPomodoro={pomodoro.start}
+        activePomodoroId={pomodoro.activeTaskId}
       />
       {completedCount > 0 && (
         <footer className="app__footer">
@@ -87,6 +111,18 @@ export default function App() {
           </button>
         </footer>
       )}
+      <PomodoroPanel
+        phase={pomodoro.phase}
+        phaseLabel={pomodoro.phaseLabel}
+        secondsLeft={pomodoro.secondsLeft}
+        totalSeconds={pomodoro.totalSeconds}
+        isRunning={pomodoro.isRunning}
+        sessionsDone={pomodoro.sessionsDone}
+        activeTaskTitle={activeTask?.title}
+        onPause={pomodoro.pause}
+        onResume={pomodoro.resume}
+        onStop={pomodoro.stop}
+      />
     </div>
   )
 }

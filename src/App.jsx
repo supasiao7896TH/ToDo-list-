@@ -3,6 +3,7 @@ import Header from './components/Header'
 import TodoForm from './components/TodoForm'
 import FilterBar from './components/FilterBar'
 import TodoList from './components/TodoList'
+import CalendarView from './components/CalendarView'
 import PomodoroPanel from './components/PomodoroPanel'
 import StatsModal from './components/StatsModal'
 import { useLocalStorage } from './hooks/useLocalStorage'
@@ -29,6 +30,7 @@ export default function App() {
   const [theme, setTheme] = useLocalStorage('todo-theme', getInitialTheme())
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [showStats, setShowStats] = useState(false)
+  const [viewMode, setViewMode] = useState('list')
 
   // ใช้ธีมกับ root element
   useEffect(() => {
@@ -103,16 +105,39 @@ export default function App() {
         remaining={remaining}
       />
       <TodoForm onAdd={addTodo} />
-      <FilterBar filters={filters} onChange={setFilters} />
-      <TodoList
-        todos={visibleTodos}
-        onToggle={toggleTodo}
-        onDelete={deleteTodo}
-        onUpdate={updateTodo}
-        onStartPomodoro={pomodoro.start}
-        activePomodoroId={pomodoro.activeTaskId}
-      />
-      {completedCount > 0 && (
+
+      <div className="view-toggle">
+        <button
+          className={`btn ${viewMode === 'list' ? 'btn--primary' : ''}`}
+          onClick={() => setViewMode('list')}
+        >
+          ☰ รายการ
+        </button>
+        <button
+          className={`btn ${viewMode === 'calendar' ? 'btn--primary' : ''}`}
+          onClick={() => setViewMode('calendar')}
+        >
+          📅 ปฏิทิน
+        </button>
+      </div>
+
+      {viewMode === 'list' ? (
+        <>
+          <FilterBar filters={filters} onChange={setFilters} />
+          <TodoList
+            todos={visibleTodos}
+            onToggle={toggleTodo}
+            onDelete={deleteTodo}
+            onUpdate={updateTodo}
+            onStartPomodoro={pomodoro.start}
+            activePomodoroId={pomodoro.activeTaskId}
+          />
+        </>
+      ) : (
+        <CalendarView todos={todos} onToggle={toggleTodo} />
+      )}
+
+      {completedCount > 0 && viewMode === 'list' && (
         <footer className="app__footer">
           <span>เสร็จแล้ว {completedCount} งาน</span>
           <button className="btn btn--ghost" onClick={clearCompleted}>
@@ -120,6 +145,8 @@ export default function App() {
           </button>
         </footer>
       )}
+
+      <div className="brand-footer">Supasit.A &amp; Claude code 🐾</div>
       <PomodoroPanel
         phase={pomodoro.phase}
         phaseLabel={pomodoro.phaseLabel}
